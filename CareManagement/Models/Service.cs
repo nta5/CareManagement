@@ -6,7 +6,7 @@ namespace CareManagement.Models
     public class Service
     {
 		[Key]
-		public Guid ServiceId;
+		public Guid ServiceId { get; set; }
 
 		[Required]
 		[ForeignKey("Qualification")]

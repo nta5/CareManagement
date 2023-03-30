@@ -11,7 +11,7 @@ namespace CareManagement.Models
         public int EmployeeId { get; set; }
 
         [ForeignKey("Qualification")]
-        public int QualificationId { get; set; }
+        public Guid QualificationId { get; set; }
         public virtual Qualification? Qualification { get; set; }
     
         public int EmpId { get; set; } // Acts as the Primary Key for an employee
