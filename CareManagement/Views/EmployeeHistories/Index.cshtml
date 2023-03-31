@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CareManagement.Models.EmployeeHistory>
+﻿@model IEnumerable<CareManagement.Models.OM.EmployeeHistory>
 
 @{
     ViewData["Title"] = "Index";
@@ -37,7 +37,7 @@
                 @Html.DisplayNameFor(model => model.EmpStatus)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EmplyeeId)
+                @Html.DisplayNameFor(model => model.EmployeeId)
             </th>
             <th></th>
         </tr>
@@ -70,7 +70,7 @@
                 @Html.DisplayFor(modelItem => item.EmpStatus)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EmplyeeId)
+                @Html.DisplayFor(modelItem => item.EmployeeId)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.EmpHisId">Edit</a> |
