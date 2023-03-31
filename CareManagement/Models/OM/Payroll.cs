@@ -28,7 +28,7 @@ namespace CareManagement.Models.OM
 
         [Required]
         [Range(0, int.MaxValue)]
-        public int HOURS { get; set;
+        public int HOURS { get; set; }
 
         [Required]
         [Range(0, int.MaxValue)]
