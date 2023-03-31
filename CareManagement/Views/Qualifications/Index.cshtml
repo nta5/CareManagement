@@ -1,0 +1,36 @@
+@model IEnumerable<CareManagement.Models.SCHDL.Qualification>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Qualifications</h1>
+
+<p>
+    <a asp-action="Create" id="CreateQualification">Create a New Qualification</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @*@Html.DisplayNameFor(model => model.QualificationDescription)*@
+                Description
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.QualificationDescription)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.QualificationId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.QualificationId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.QualificationId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

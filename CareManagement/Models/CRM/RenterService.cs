@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using CareManagement.Models;
 using CareManagement.Models.SCHDL;
 
 namespace CareManagement.Models.CRM

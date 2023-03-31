@@ -9,11 +9,11 @@ namespace CareManagement.Models.SCHDL
 		[Key]
 		public Guid InvoiceNumber { get; set; }
 
-		[Required]
-		[ForeignKey("Renter")]
+		//[Required]
+		//[ForeignKey("Renter")]
 
-		public int RenterId { get; set; }
-		public virtual Renter Renter { get; set; }
+		//public int RenterId { get; set; }
+		//public virtual Renter Renter { get; set; }
 
 
         /**
