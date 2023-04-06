@@ -27,7 +27,10 @@ namespace CareManagement.Models.OM
         public Enum.EType EmployeeType { get; set; }
 
 
-        [Required] [Range(0, int.MaxValue)] public double Hours { get; set; }
+        [Required]
+        [Range(0, int.MaxValue)]
+        [DisplayFormat(DataFormatString = "{0:F2}")]
+        public double Hours { get; set; }
 
         [Required] [Range(0, int.MaxValue)] public double Overtime { get; set; }
 

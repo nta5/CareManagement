@@ -1,4 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using CareManagement.Models;
+
 
 namespace CareManagement.Models.OM
 {
@@ -8,7 +12,7 @@ namespace CareManagement.Models.OM
         public int Id { get; set; }
 
         [Required]
-        public int EmployeeId { get; set; }
+        public Guid EmployeeId { get; set; }
 
         [Required]
         public DateTime CheckInTime { get; set; }

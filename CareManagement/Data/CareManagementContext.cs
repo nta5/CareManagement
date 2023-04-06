@@ -26,5 +26,6 @@ namespace CareManagement.Data
         public DbSet<CareManagement.Models.OM.EmployeeHistory>? EmployeeHistory { get; set; }
         public DbSet<CareManagement.Models.OM.Vacation>? Vacation { get; set; }
         public DbSet<CareManagement.Models.OM.Payroll>? Payroll { get; set; }
+        public object Attendance { get; internal set; }
     }
 }

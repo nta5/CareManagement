@@ -31,7 +31,7 @@ namespace CareManagement.Models.OM
         [Required]
         public DateTime StartTime { get; set; } // When the shift starts
 
-        [Required]
+        
         public DateTime EndTime { get; set; } // When the shift ends
 
         

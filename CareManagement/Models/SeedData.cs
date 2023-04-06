@@ -222,7 +222,7 @@ namespace CareManagement.Models
                             StartTime = new DateTime(2023, 4, 5, 8, 0, 0),
                             EndTime = new DateTime(2023, 4, 5, 16, 0, 0),
                             Sick = false
-                        },
+                        },/*
                         new Shift
                         {
                             EmployeeId = e1,
@@ -230,7 +230,7 @@ namespace CareManagement.Models
                             StartTime = new DateTime(2023, 4, 6, 8, 0, 0),
                             EndTime = new DateTime(2023, 4, 6, 16, 0, 0),
                             Sick = false
-                        },
+                        },*/
                         new Shift
                         {
                             EmployeeId = e1,

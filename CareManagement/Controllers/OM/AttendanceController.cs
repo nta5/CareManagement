@@ -1,9 +1,15 @@
-﻿/*using CareManagement.Data;
+﻿using CareManagement.Data;
 using CareManagement.Models.OM;
+using CareManagement.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace CareManagement.Controllers.OM
+
+namespace CareManagement.Controllers
 {
     public class AttendanceController : Controller
     {
@@ -15,103 +21,67 @@ namespace CareManagement.Controllers.OM
         }
 
         // GET: Attendance/CheckInOut
-        public IActionResult CheckInOut()
+        public async Task<IActionResult> Index()
         {
-            var currentEmployee = GetCurrentEmployee();
-            if (currentEmployee == null)
+            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName");
+            var employees = await _context.Employee.ToListAsync();
+            var model = new AttendanceViewModel
             {
-                return RedirectToAction("Login", "Account");
-            }
+                EmployeeList = new SelectList(employees, "Id", "FirstName"),
+                //IsCheckedIn= false
+            };
+            
+            return View(model);
+        }
 
-            // Check if the employee has already checked in today
-            var today = DateTime.Today;
-            var checkIn = _context.Attendance.FirstOrDefault(a => a.EmployeeId == currentEmployee.EmployeeId && a.CheckIn.Date == today);
-
-            // Determine whether the employee is currently checked in or checked out
-            var isCheckedIn = checkIn != null && checkIn.CheckOut == null;
-
-            var model = new CheckInOutViewModel
+        [HttpPost]
+        public IActionResult CheckIn(AttendanceViewModel model)
+        {
+            model.currentAttendance = new Attendance();
+            model.currentAttendance.CheckInTime = DateTime.Now;
+            // Create a new Shift object
+            var shift = new Shift
             {
-                EmployeeId = currentEmployee.EmployeeId,
-                IsCheckedIn = isCheckedIn
+                EmployeeId = model.EmployeeId,
+                ManagerId = model.EmployeeId,
+                StartTime = DateTime.Now,
+                EndTime = DateTime.MinValue,
+                Sick = false,
+                ScheduleId = model.EmployeeId
             };
 
-            return View(model);
+            // Add the new Shift to the database
+            _context.Add(shift);
+            _context.SaveChanges();
+
+            // Set the ViewBag message
+            ViewBag.Message = $"You have checked in at {DateTime.Now.ToString("hh:mm tt")}.";
+
+             return View("Index");
         }
 
-        // POST: Attendance/CheckInOut
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CheckInOut(CheckInOutViewModel model)
+        public IActionResult CheckOut(AttendanceViewModel model)
         {
-            var currentEmployee = GetCurrentEmployee();
-            if (currentEmployee == null)
+            model.IsCheckedIn = false;
+            // Find the employee's current shift
+            var shift = _context.Shift
+                .Where(s => s.EmployeeId == model.EmployeeId && s.StartTime.Date == DateTime.Now.Date)
+                .OrderByDescending(s => Math.Abs((s.StartTime - DateTime.Now).TotalMinutes))
+                .LastOrDefault();
+
+            if (shift != null)
             {
-                return RedirectToAction("Login", "Account");
+                // Update the end time of the current shift
+                shift.EndTime = DateTime.Now;
+                _context.SaveChanges();
+
+                // Set the ViewBag message
+                ViewBag.Message = $"You have checked out at {DateTime.Now.ToString("hh:mm tt")}.";
             }
 
-            if (ModelState.IsValid)
-            {
-                // Check if the employee has already checked in today
-                var today = DateTime.Today;
-                var checkIn = _context.Attendance.FirstOrDefault(a => a.EmployeeId == currentEmployee.EmployeeId && a.CheckIn.Date == today);
-
-                if (model.IsCheckedIn)
-                {
-                    if (checkIn == null)
-                    {
-                        // Employee is checking in for the first time today
-                        var attendance = new Attendance
-                        {
-                            EmployeeId = currentEmployee.EmployeeId,
-                            CheckIn = DateTime.Now
-                        };
-                        _context.Attendance.Add(attendance);
-                        await _context.SaveChangesAsync();
-                    }
-                    else if (checkIn.CheckOut == null)
-                    {
-                        // Employee has already checked in today
-                        ModelState.AddModelError("IsCheckedIn", "You are already checked in.");
-                    }
-                    else
-                    {
-                        // Employee has checked out earlier today and is now checking back in
-                        checkIn.CheckOut = null;
-                        checkIn.CheckIn = DateTime.Now;
-                        await _context.SaveChangesAsync();
-                    }
-                }
-                else
-                {
-                    if (checkIn == null)
-                    {
-                        // Employee has not checked in yet today
-                        ModelState.AddModelError("IsCheckedIn", "You need to check in first.");
-                    }
-                    else if (checkIn.CheckOut != null)
-                    {
-                        // Employee has already checked out today
-                        ModelState.AddModelError("IsCheckedIn", "You have already checked out.");
-                    }
-                    else
-                    {
-                        // Employee is checking out for the day
-                        checkIn.CheckOut = DateTime.Now;
-                        await _context.SaveChangesAsync();
-                    }
-                }
-            }
-
-            return View(model);
-        }
-
-        private Employee GetCurrentEmployee()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return _context.Employee.FirstOrDefault(e => e.UserId == userId);
+            // Redirect to the Index action
+            return View("Index");
         }
     }
-
 }
-*/
