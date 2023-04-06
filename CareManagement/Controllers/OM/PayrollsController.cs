@@ -19,12 +19,112 @@ namespace CareManagement.Controllers.OM
             _context = context;
         }
 
-        // GET: Payrolls
         public async Task<IActionResult> Index()
         {
+            // Get the start and end dates for the past two weeks
+            DateTime startDate = DateTime.Parse("2023-03-20");
+            DateTime endDate = DateTime.Parse("2023-04-20");
+
+            // Get all shifts within the past two weeks
+            var shifts = _context.Shift
+                .Where(s => s.StartTime >= startDate && s.EndTime <= endDate && s.Employee.FirstName == "Bruce")
+                .Include(s => s.Employee)
+                .ToList();
+
+            // Calculate the total hours worked and pay for each employee            
+
+            var employeeShifts = shifts.GroupBy(s => s.EmployeeId)
+                .Select(g => new
+                {
+                    EmployeeId = g.Key,                    
+                    TotalHoursWorked = g.Sum(s => (s.EndTime - s.StartTime).TotalHours),
+                    PayRate = _context.Employee.Where(e => e.EmployeeId == g.Key).Select(e => e.PayRate).FirstOrDefault(),
+                    SickDays = g.Sum(s => s.Sick ? 1 : 0)
+                })
+                .FirstOrDefault();
+
+            Guid empId = employeeShifts.EmployeeId;
+            double totalHours = employeeShifts.TotalHoursWorked;
+            double payRate = employeeShifts.PayRate;
+            int sickDays = employeeShifts.SickDays;
+
+            var currentEmployee = _context.Employee.Where(e => e.EmployeeId == empId).FirstOrDefault();
+            var sickPay = 0;
+            var sickHours = sickDays * 8;
+            if (currentEmployee.SickDays >= sickDays)
+            {
+                sickPay += sickHours;
+                currentEmployee.SickDays -= sickDays;
+                totalHours -= sickHours;
+                _context.SaveChanges();
+            }
+            else
+            {
+                totalHours -= sickHours;
+            }
+
+
+
+            // Calculate the total payroll for all employees
+            int totalPayroll = (int) (totalHours * payRate);
+
+            // Return the payroll data as a view model
+            
+            //var payrollidTemp = new Guid();
+            var checker = _context.Payroll.Where(s => s.StartDate >= startDate && s.EndDate <= endDate && s.Hours == totalHours && s.SickPay == sickPay ).ToList();
+            if (!checker.Any())
+            {
+                var payrollsToDelete = _context.Payroll
+                    .Where(s => s.StartDate >= startDate && s.EndDate <= endDate && s.StartDate != s.EndDate)
+                    .ToList();
+
+                if (payrollsToDelete.Any())
+                {
+                    _context.Payroll.RemoveRange(payrollsToDelete);
+                    _context.SaveChanges();
+                }
+                _context.Payroll.AddRange(
+                new Payroll
+                {
+                    PayrollID = new Guid(),
+                    EmployeeId = empId,
+                    StartDate = startDate,
+                    EndDate = endDate,
+                    EmployeeType = Models.OM.Enum.EType.Part_time,
+                    Hours = (int)totalHours,
+                    Overtime = 10,
+                    LateDeduction = 1,
+                    VacationPay = 1,
+                    SickPay = sickPay,
+                    Pre_tax = 100,
+                    Tax = 10,
+                    //EmployeePayroll = employeePayroll,
+                    CheckAmount = totalPayroll
+                }
+
+                );
+                _context.SaveChanges();
+            }
+            
+            
+            var payrollView = await _context.Payroll.ToListAsync();
+            
+
+            return View(payrollView);
+        }
+
+
+
+
+
+
+        // GET: Payrolls
+        /*public async Task<IActionResult> Index()
+        {
+            var bruceShifts = _context.Shift.Where(s => s.Employee.FirstName == "Bruce").Include(s => s.Employee);
             var careManagementContext = _context.Payroll.Include(p => p.Employee);
             return View(await careManagementContext.ToListAsync());
-        }
+        }*/
 
         // GET: Payrolls/Details/5
         public async Task<IActionResult> Details(Guid? id)

@@ -7,25 +7,25 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CareManagement.Models.OM
 {
-    public class Payroll
+    public class PayrollTest
     {
         [Key] public Guid PayrollID { get; set; }
 
-        [Required] [ForeignKey("Employee")] public Guid EmployeeId { get; set; }
+        [ForeignKey("Employee")] public Guid EmployeeId { get; set; }
         public virtual Employee? Employee { get; set; }
 
-        [Required] public DateTime StartDate { get; set; }
+        public DateTime StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
 
-        [Required]
+        
         // [EnumDataType(typeof(EmploymentType))]
         public Enum.EType EmployeeType { get; set; }
 
 
-        [Required] [Range(0, int.MaxValue)] public int Hours { get; set; }
+        [Range(0, int.MaxValue)] public int Hours { get; set; }
 
-        [Required] [Range(0, int.MaxValue)] public int Overtime { get; set; }
+        [Range(0, int.MaxValue)] public int Overtime { get; set; }
 
         [Range(0, int.MaxValue)] public int? LateDeduction { get; set; }
 
@@ -40,5 +40,11 @@ namespace CareManagement.Models.OM
 
         [Range(0, int.MaxValue)] public int? CheckAmount { get; set; }
 
+        public enum EmploymentType
+        {
+            F,
+            P,
+            O
+        }
     }
 }
