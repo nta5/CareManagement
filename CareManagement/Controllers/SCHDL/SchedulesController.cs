@@ -70,29 +70,6 @@ namespace CareManagement.Controllers.SCHDL
                 .Include(s => s.Shift)
                 .FirstOrDefaultAsync(m => m.ScheduleId == id);
 
-            //var schedule = await (from s in _context.Schedule
-            //                      join sh in _context.Shift on s.ShiftID equals sh.ShiftId
-            //                      join e in _context.Employee on sh.EmployeeId equals e.EmployeeId
-            //                      join r in _context.Renter on r.RenterId equals s.RenterId
-            //                      where s.ScheduleId == id
-            //                      select new ScheduleViewModel
-            //                      {
-            //                          ScheduleId = s.ScheduleId,
-            //                          StartTime = s.StartTime,
-            //                          EndTime = s.EndTime,
-            //                          IsInvoiced = s.IsInvoiced,
-            //                          IsRepeating = s.IsRepeating,
-            //                          RepeatStartDate = s.RepeatStartDate,
-            //                          RepeatEndDate = s.RepeatEndDate,
-            //                          RenterId = s.RenterId,
-            //                          ShiftID = s.ShiftID,
-            //                          ServiceId = s.ServiceId,
-            //                          EmployeeName = e.FirstName + " " + e.LastName,
-            //                          Service = s.Service,
-            //                          Renter = s.Renter,
-            //                          Shift = s.Shift
-            //                      }).FirstOrDefaultAsync(m => m.ScheduleId == id);
-
             if (schedule == null)
             {
                 return NotFound();
@@ -142,9 +119,44 @@ namespace CareManagement.Controllers.SCHDL
         {
             if (ModelState.IsValid)
             {
-                schedule.ScheduleId = Guid.NewGuid();
-                _context.Add(schedule);
-                await _context.SaveChangesAsync();
+                //schedule.ScheduleId = Guid.NewGuid();
+                //_context.Add(schedule);
+                //await _context.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
+
+                if (schedule.IsRepeating && schedule.RepeatStartDate.HasValue && schedule.RepeatEndDate.HasValue)
+                {
+                    DateTime currentStartTime = schedule.StartTime;
+                    //DateTime currentEndTime = schedule.EndTime.Date + (schedule.RepeatStartDate.Value.TimeOfDay - schedule.StartTime.TimeOfDay);
+                    DateTime currentEndTime = schedule.EndTime;
+                    while (currentStartTime <= schedule.RepeatEndDate.Value)
+                    {
+                        Schedule newSchedule = new Schedule
+                        {
+                            ScheduleId = Guid.NewGuid(),
+                            StartTime = currentStartTime,
+                            EndTime = currentEndTime,
+                            IsInvoiced = schedule.IsInvoiced,
+                            IsRepeating = schedule.IsRepeating,
+                            RepeatStartDate = schedule.RepeatStartDate,
+                            RepeatEndDate = schedule.RepeatEndDate,
+                            RenterId = schedule.RenterId,
+                            ShiftID = schedule.ShiftID,
+                            ServiceId = schedule.ServiceId
+                        };
+                        _context.Add(newSchedule);
+                        await _context.SaveChangesAsync();
+
+                        // Move to the next week
+                        currentStartTime = currentStartTime.AddDays(7);
+                        currentEndTime = currentEndTime.AddDays(7);
+                    }
+                }
+                else
+                {
+                    _context.Add(schedule);
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["RenterId"] = new SelectList(_context.Renter, "RenterId", "RenterId", schedule.RenterId);
@@ -175,7 +187,6 @@ namespace CareManagement.Controllers.SCHDL
             // Set the selected value for the SelectList
             ((List<SelectListItem>)ViewData["RenterId"]).FirstOrDefault(item => item.Value == schedule.RenterId.ToString()).Selected = true;
 
-            //ViewData["RenterId"] = new SelectList(_context.Renter, "RenterId", "RenterId", schedule.RenterId);
             ViewData["ServiceId"] = new SelectList(_context.Service, "ServiceId", "Type", schedule.ServiceId);
 
             ViewData["ShiftID"] = _context.Shift
@@ -190,7 +201,6 @@ namespace CareManagement.Controllers.SCHDL
             .ToList();
             ((List<SelectListItem>)ViewData["ShiftID"]).FirstOrDefault(item => item.Value == schedule.ShiftID.ToString()).Selected = true;
 
-            //ViewData["ShiftID"] = new SelectList(_context.Shift, "ShiftId", "ShiftId", schedule.ShiftID);
             return View(schedule);
         }
 

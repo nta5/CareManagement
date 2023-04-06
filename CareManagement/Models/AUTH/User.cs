@@ -17,6 +17,8 @@ namespace CareManagement.Models.AUTH
 
         [Required]
         public string Role { get; set; }
+
+        public Guid EmployeeId { get; set; }
     }
 }
 

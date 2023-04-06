@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using CareManagement.Data;
 using CareManagement.Models.AUTH;
 using CareManagement.Models.OM;
 using CareManagement.Models.SCHDL;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace CareManagement.Controllers.AUTH
@@ -22,12 +24,14 @@ namespace CareManagement.Controllers.AUTH
         private IdentityRole admin;
         private IdentityRole employee;
 
+        private readonly CareManagementContext _context;
         private UserManager<AppUser> userManager;
         private IPasswordHasher<AppUser> passwordHasher;
         private RoleManager<IdentityRole> roleManager;
 
-        public AdminController(UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, RoleManager<IdentityRole> roleMgr)
+        public AdminController(CareManagementContext context, UserManager<AppUser> usrMgr, IPasswordHasher<AppUser> passwordHash, RoleManager<IdentityRole> roleMgr)
         {
+            _context = context;
             userManager = usrMgr;
             passwordHasher = passwordHash;
             roleManager = roleMgr;
@@ -62,8 +66,11 @@ namespace CareManagement.Controllers.AUTH
         }
 
         // GET: Admin/Create
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var employees = await _context.Employee.ToListAsync();
+            ViewData["EmployeeList"] = new SelectList(employees.Select(e => new { e.EmployeeId, FullName = e.FirstName + " " + e.LastName + " - " + e.Title }), "EmployeeId", "FullName");
+
             return View();
         }
 
@@ -72,7 +79,7 @@ namespace CareManagement.Controllers.AUTH
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Email,Password,Role")] User user)
+        public async Task<IActionResult> Create([Bind("Name,Email,Password,Role,EmployeeId")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -80,7 +87,8 @@ namespace CareManagement.Controllers.AUTH
                 {
                     UserName = user.Name,
                     Email = user.Email,
-                    Role = user.Role
+                    Role = user.Role,
+                    EmployeeId = user.EmployeeId
                 };
 
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
@@ -106,6 +114,9 @@ namespace CareManagement.Controllers.AUTH
                 return NotFound();
             }
 
+            var employees = await _context.Employee.ToListAsync();
+            ViewData["EmployeeList"] = new SelectList(employees.Select(e => new { e.EmployeeId, FullName = e.FirstName + " " + e.LastName + " - " + e.Title }), "EmployeeId", "FullName");
+
             AppUser user = await userManager.FindByIdAsync(id);
             if (user == null)
             {
@@ -119,8 +130,11 @@ namespace CareManagement.Controllers.AUTH
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(String id, String username, String email, String role, String password, String? newPassword)
+        public async Task<IActionResult> Edit(String id, String username, String email, String role, Guid employeeId, String password, String? newPassword)
         {
+            var employees = await _context.Employee.ToListAsync();
+            ViewData["EmployeeList"] = new SelectList(employees.Select(e => new { e.EmployeeId, FullName = e.FirstName + " " + e.LastName + " - " + e.Title }), "EmployeeId", "FullName");
+
             AppUser user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
@@ -156,6 +170,16 @@ namespace CareManagement.Controllers.AUTH
                 else
                 {
                     ModelState.AddModelError("", "Role cannot be empty");
+                    allow = false;
+                }
+
+                if (employeeId != null)
+                {
+                    user.EmployeeId = employeeId;
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Employee ID cannot be empty");
                     allow = false;
                 }
 

@@ -30,6 +30,10 @@
                 </select>
             </div>
             <div class="form-group">
+                <label asp-for="EmployeeId"></label>
+                <select id="EmployeeId" asp-for="EmployeeId" class="form-control" asp-items="ViewBag.EmployeeList"></select>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>

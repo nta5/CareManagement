@@ -15,27 +15,27 @@
         </p>
         <p>
             Between: <input type="datetime-local" name="startTime" value="@ViewData["CurrentFilter"]" /> and
-                     <input type="datetime-local" name="endTime" value="@ViewData["CurrentFilter"]" />
+            <input type="datetime-local" name="endTime" value="@ViewData["CurrentFilter"]" />
         </p>
         <input type="submit" value="Search" class="btn btn-default" />
     </div>
 </form>
-<br/>
+<br />
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.StartTime)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StartTimeSort"]">@Html.DisplayNameFor(model => model.StartTime)</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndTime)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["EndTimeSort"]">@Html.DisplayNameFor(model => model.EndTime)</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Renter)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["RenterSort"]">@Html.DisplayNameFor(model => model.Renter)</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Service)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["ServiceSort"]">@Html.DisplayNameFor(model => model.Service)</a>
             </th>
             <th></th>
         </tr>
@@ -64,6 +64,29 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script>
+window.onload = function () {
+
+    var chart = new CanvasJS.Chart("chartContainer", {
+        animationEnabled: true,
+        theme: "light2", // "light1", "light2", "dark1", "dark2"
+        title: {
+            text: "Total amount paid by each Renter"
+        },
+        axisY: {
+            title: "Name of Renter"
+        },
+        data: [{
+            type: "column",
+            dataPoints: @Html.Raw(ViewBag.DataPoints)
+}]
+    });
+    chart.render();
+}
+</script>
+<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

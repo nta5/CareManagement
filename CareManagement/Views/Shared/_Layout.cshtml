@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CareManagement.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -23,58 +24,64 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Schedules" asp-action="Index">Schedule</a>
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="schedulingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Scheduling
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="schedulingDropdown">
+                                    <a class="dropdown-item" asp-area="" asp-controller="ShiftSchedules" asp-action="Index">Shift Schedule</a>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a class="dropdown-item" asp-area="" asp-controller="Schedules" asp-action="Index">Schedule</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Services" asp-action="Index">Service</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Invoices" asp-action="Index">Invoice</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Report" asp-action="Index">Report</a>
+                                    }
+
+                                </div>
+                            </li>
+                        }
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="schedulingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Organization Management
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="schedulingDropdown">
+                                <a class="dropdown-item" asp-area="" asp-controller="Employees" asp-action="Index">Employee</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="EmployeeHistories" asp-action="Index">Employee History</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Qualifications" asp-action="Index">Qualification</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Payrolls" asp-action="Index">Payroll</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Shifts" asp-action="Index">Shift</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Vacations" asp-action="Index">Vacation</a>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Services" asp-action="Index">Service</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="schedulingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Customer Relation Management
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="schedulingDropdown">
+
+                                <a class="dropdown-item" asp-area="" asp-controller="Appliances" asp-action="Index">Appliances</a>
+
+                                <a class="dropdown-item" asp-area="" asp-controller="Applicants" asp-action="Index">Applicants</a>
+
+                                <a class="dropdown-item" asp-area="" asp-controller="AssetMaintenances" asp-action="Index">AssetMaintenances</a>
+
+                                <a class="dropdown-item" asp-area="" asp-controller="AssetRentLogs" asp-action="Index">AssetRentLogs</a>
+
+                                <a class="dropdown-item" asp-area="" asp-controller="Assets" asp-action="Index">Assets</a>
+
+                                <a class="dropdown-item" asp-area="" asp-controller="Renters" asp-action="Index">Renters</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="RenterServices" asp-action="Index">RenterServices</a>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Qualifications" asp-action="Index">Qualification</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Invoices" asp-action="Index">Invoice</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Employees" asp-action="Index">Employee</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="EmployeeHistories" asp-action="Index">Employee History</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Payrolls" asp-action="Index">Payroll</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Shifts" asp-action="Index">Shift</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Vacations" asp-action="Index">Vacation</a>
-                        </li>
-                        <br />
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Appliances" asp-action="Index">Appliances</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Applicants" asp-action="Index">Applicants</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="AssetMaintenances" asp-action="Index">AssetMaintenances</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="AssetRentLogs" asp-action="Index">AssetRentLogs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Assets" asp-action="Index">Assets</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Renters" asp-action="Index">Renters</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="RenterServices" asp-action="Index">RenterServices</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Report" asp-action="Index">Report</a>
-                        </li>
+                        @if (User?.Identity?.IsAuthenticated ?? false && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -110,6 +117,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

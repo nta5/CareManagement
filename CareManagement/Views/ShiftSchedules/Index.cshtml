@@ -1,0 +1,66 @@
+﻿@using CareManagement.ViewModels
+@model ShiftSchedulesViewModel
+
+@{
+    ViewData["Title"] = "Shift Schedules";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Index" method="post">
+    <div class="form-group" hidden>
+        <label asp-for="SelectedEmployeeId">Employee Id</label>
+        <input asp-for="SelectedEmployeeId" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="SelectedEmployeeName">Employee Name</label>
+        <input asp-for="SelectedEmployeeName" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="StartDate">Start Date</label>
+        <input asp-for="StartDate" type="date" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Show Schedule</button>
+</form>
+
+@if (Model.DisplayedShift != null && Model.DisplayedSchedules != null)
+{
+    <h2>Shift Details</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Sick</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.DisplayedShift.StartTime</td>
+                <td>@Model.DisplayedShift.EndTime</td>
+                <td>@(Model.DisplayedShift.Sick ? "Yes" : "No")</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Schedule for the Week</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Service</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var schedule in Model.DisplayedSchedules)
+            {
+                <tr>
+                    <td>@schedule.StartTime</td>
+                    <td>@schedule.EndTime</td>
+                    <td>@schedule.Service.Type</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
