@@ -5,7 +5,7 @@ name: .NET
 
 on:
   push:
-    branches: ["master", "brad-dev", "dev-scheduling"]
+    branches: ["brad-selenium-action"]
   pull_request:
     branches: [ "master" ]
 
@@ -24,7 +24,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: msbuild #dotnet build --no-restore
+      run: dotnet build --no-restore
    # - name: Test
      # run: dotnet test --no-build --verbosity normal # run the test suite
 
