@@ -61,11 +61,25 @@ namespace CareManagement.Controllers.OM
         {
             if (ModelState.IsValid)
             {
+                var currentEmployee = await _context.Employee.FindAsync(vacation.EmployeeId);
+                // Check if the employee has enough vacation days available
+                var vacationDaysTaken = await _context.Vacation
+                    .Where(v => v.EmployeeId == vacation.EmployeeId && v.StartDate.Year == vacation.StartDate.Year)
+                    .SumAsync(v => (v.EndDate - v.StartDate).TotalDays);
+                var vacationDaysAvailable = currentEmployee.VacationDays - vacationDaysTaken;
+                if (vacationDaysAvailable < (vacation.EndDate - vacation.StartDate).TotalDays)
+                {
+                    ModelState.AddModelError("StartDate", $"Employee does not have enough vacation days available. Available days: {vacationDaysAvailable}");
+                    ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName", vacation.EmployeeId);
+                    return View(vacation);
+                }
+
                 vacation.VacationId = Guid.NewGuid();
                 _context.Add(vacation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName", vacation.EmployeeId);
             return View(vacation);
         }

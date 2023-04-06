@@ -198,6 +198,46 @@ namespace CareManagement.Models
                             StartTime = new DateTime(2023, 3, 31, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 31, 16, 0, 0),
                             Sick = false
+                        },                       
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 4, 3, 8, 0, 0),
+                            EndTime = new DateTime(2023, 4, 3, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 4, 4, 8, 0, 0),
+                            EndTime = new DateTime(2023, 4, 4, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 4, 5, 8, 0, 0),
+                            EndTime = new DateTime(2023, 4, 5, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 4, 6, 8, 0, 0),
+                            EndTime = new DateTime(2023, 4, 6, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 4, 7, 8, 0, 0),
+                            EndTime = new DateTime(2023, 4, 7, 16, 0, 0),
+                            Sick = false
                         },
                         new Shift
                         {
