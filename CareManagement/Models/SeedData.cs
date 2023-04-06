@@ -29,6 +29,7 @@ namespace CareManagement.Models
                 Guid e4 = Guid.NewGuid();
                 Guid e5 = Guid.NewGuid();
                 Guid e6 = Guid.NewGuid();
+                Guid e7 = Guid.NewGuid();
                 Guid Shift1 = Guid.NewGuid();
                 Guid Shift2 = Guid.NewGuid();
                 Guid Shift3 = Guid.NewGuid();
@@ -205,7 +206,26 @@ namespace CareManagement.Models
                             SickDays = 4,
                             Title = OM.Enum.EmployeeTitle.Nurse,
                             StartDate = DateTime.Now
+                        },
+                        new Employee
+                        {
+                            EmployeeId = e7,
+                            QualificationId = Qualification3,
+                            FirstName = "Alison",
+                            LastName = "Burgers",
+                            Address = "8888 BCIT st, Burnaby, BC",
+                            EmergencyContact = 1,
+                            Phone = "111-111-1111",
+                            EmployeeType = OM.Enum.EType.Full_time,
+                            PayRate = 35.35F,
+                            PayType = OM.Enum.PaymentType.Hourly,
+                            VacationDays = 14,
+                            EmployeeStatus = OM.Enum.EStatus.Layoff,
+                            SickDays = 4,
+                            Title = OM.Enum.EmployeeTitle.Nurse,
+                            StartDate = DateTime.Now
                         }
+
                     );
                 }
                 if (!context.Shift.Any())
@@ -214,7 +234,7 @@ namespace CareManagement.Models
                         new Shift
                         {
                             ShiftId = Shift1,
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 3, 20, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 20, 16, 0, 0),
@@ -222,7 +242,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 3, 21, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 21, 16, 0, 0),
@@ -230,7 +250,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 3, 22, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 22, 16, 0, 0),
@@ -238,7 +258,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 3, 23, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 23, 16, 0, 0),
@@ -246,7 +266,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 3, 24, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 24, 16, 0, 0),
@@ -254,7 +274,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 3, 27, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 27, 16, 0, 0),
@@ -262,7 +282,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 3, 28, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 28, 16, 0, 0),
@@ -270,7 +290,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 3, 29, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 29, 16, 0, 0),
@@ -278,7 +298,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 3, 30, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 30, 16, 0, 0),
@@ -286,7 +306,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 3, 31, 8, 0, 0),
                             EndTime = new DateTime(2023, 3, 31, 16, 0, 0),
@@ -294,7 +314,7 @@ namespace CareManagement.Models
                         },                       
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 4, 3, 8, 0, 0),
                             EndTime = new DateTime(2023, 4, 3, 16, 0, 0),
@@ -302,7 +322,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 4, 4, 8, 0, 0),
                             EndTime = new DateTime(2023, 4, 4, 16, 0, 0),
@@ -310,7 +330,7 @@ namespace CareManagement.Models
                         },
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 4, 5, 8, 0, 0),
                             EndTime = new DateTime(2023, 4, 5, 16, 0, 0),
@@ -326,7 +346,7 @@ namespace CareManagement.Models
                         },*/
                         new Shift
                         {
-                            EmployeeId = e1,
+                            EmployeeId = e7,
                             ManagerId = e1,
                             StartTime = new DateTime(2023, 4, 7, 8, 0, 0),
                             EndTime = new DateTime(2023, 4, 7, 16, 0, 0),

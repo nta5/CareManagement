@@ -99,55 +99,15 @@
             <td>
                 @Html.DisplayFor(model => model.DisplayedPayroll.CheckAmount)
             </td>
-      @*      <td>
-                <a asp-action="Edit" asp-route-id="@Model.PayrollID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@Model.PayrollID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@Model.PayrollID">Delete</a>
-            </td>*@
+            <td>
+                @if (Model != null)
+                {
+                    <a asp-controller="Payrolls" asp-action="Details" asp-route-id="@Model.DisplayedPayroll.PayrollID">Details</a>
+
+                }
+            </td>
+
         </tr>
 
     </tbody>
 </table>
-@*@if (Model.DisplayedShift != null && Model.DisplayedSchedules != null)
-{
-    <h2>Shift Details</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Employee</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Sick</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>@(Model.DisplayedShift.Employee.FirstName + " " + Model.DisplayedShift.Employee.LastName)</td>
-                <td>@Model.DisplayedShift.StartTime</td>
-                <td>@Model.DisplayedShift.EndTime</td>
-                <td>@(Model.DisplayedShift.Sick ? "Yes" : "No")</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h2>Schedule for the Week</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Service</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var schedule in Model.DisplayedSchedules)
-            {
-                <tr>
-                    <td>@schedule.StartTime</td>
-                    <td>@schedule.EndTime</td>
-                    <td>@schedule.Service.Type</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}*@

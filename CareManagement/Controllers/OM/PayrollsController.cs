@@ -10,6 +10,7 @@ using CareManagement.Models.OM;
 using CareManagement.Utilities;
 using CareManagement.Models.SCHDL;
 using CareManagement.ViewModels;
+using Org.BouncyCastle.Ocsp;
 
 namespace CareManagement.Controllers.OM
 {
@@ -36,7 +37,11 @@ namespace CareManagement.Controllers.OM
             ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName");
             List<String> periods = TwoWeekHelper.GetTwoWeekPeriods();
             ViewBag.TwoWeekPeriods = new SelectList(periods);
-
+           /* var currentModel = new PayrollViewModel
+            {
+                PayrollID = Guid.NewGuid()
+            };
+            */
             return View();
         }
 
@@ -93,12 +98,24 @@ namespace CareManagement.Controllers.OM
                     totalHours -= sickHours;
                 }
 
-                // Calculating vacation pay
-                var totalVacationDays = _context.Vacation
-                 .Where(s => s.StartDate >= startDate && s.EndDate <= endDate && s.Employee.EmployeeId == currentEmployeeId)
-                 .Sum(s => (s.EndDate - s.StartDate).TotalDays);
-                double vacationPay = totalVacationDays * 8 * payRate;
+                /*   // Calculating vacation pay
+                   var totalVacationDays = _context.Vacation
+                    .Where(s => s.StartDate >= startDate && s.EndDate <= endDate && s.Employee.EmployeeId == currentEmployeeId)
+                    .Sum(s => (s.EndDate - s.StartDate).TotalDays);
+                   double vacationPay = totalVacationDays * 8 * payRate;*/
+                var vacationRecords = _context.Vacation
+                  .Where(v => v.Employee.EmployeeId == currentEmployeeId &&
+                      v.StartDate <= endDate && v.EndDate >= startDate)
+                  .ToList();
 
+                var totalVacationDays = vacationRecords
+                    .Sum(v =>
+                    {
+                        var vacationStart = v.StartDate < startDate ? startDate : v.StartDate;
+                        var vacationEnd = v.EndDate > endDate ? endDate : v.EndDate;
+                        return (vacationEnd - vacationStart).TotalDays;
+                    });
+                double vacationPay = totalVacationDays * 8 * payRate;
 
                 // Calculate overtime
                 double totalOvertimeHours = 0;
@@ -187,7 +204,9 @@ namespace CareManagement.Controllers.OM
                     }
                 }
 
-                Guid payrollId = model.PayrollID;
+                Guid payrollId = Guid.NewGuid();
+                model.PayrollID = payrollId;
+
                 var checker = _context.Payroll.Where(s => s.PayrollID == payrollId).ToList();
 
                 if (!checker.Any())
@@ -202,6 +221,7 @@ namespace CareManagement.Controllers.OM
                         _context.SaveChanges();
                     }
                     model.DisplayedPayroll = new Payroll();
+                    model.PayrollID = payrollId;
                     model.DisplayedPayroll.PayrollID = payrollId;
                     model.DisplayedPayroll.Employee = currentEmployee;
                     model.DisplayedPayroll.EmployeeId = currentEmployeeId;
@@ -215,27 +235,47 @@ namespace CareManagement.Controllers.OM
                     model.DisplayedPayroll.Pretax = Math.Round(totalPay, 2);
                     model.DisplayedPayroll.Tax = Math.Round(totalPay * taxBracket, 2);
                     model.DisplayedPayroll.CheckAmount = Math.Round(totalPay - (totalPay * taxBracket), 2);
+                    _context.Payroll.AddRange(
+                        new Payroll
+                        {
 
+                            EmployeeId = currentEmployeeId,
+                            PayrollID = payrollId,
+
+                            StartDate = startDate,
+                            EndDate = endDate,
+                            EmployeeType = currentEmployee.EmployeeType,
+                            Hours = totalHours,
+                            Overtime = totalOvertimeHours,
+                            LateDeduction = 0,
+                            VacationPay = Math.Round(vacationPay, 2),
+                            SickPay = Math.Round(sickPay, 2),
+                            Pretax = Math.Round(totalPay, 2),
+                            Tax = Math.Round(totalPay * taxBracket, 2),
+                            CheckAmount = Math.Round(totalPay - (totalPay * taxBracket), 2)
+                        });
+                        _context.SaveChanges();
                     return View(model);
                 }                
             }
             return View();
-        }   
+        }
 
 
 
 
-// GET: Payrolls/Details/5
-public async Task<IActionResult> Details(Guid? id)
+        // GET: Payrolls/Details/5
+        [HttpGet]
+    public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null || _context.Payroll == null)
             {
                 return NotFound();
             }
 
-            var payroll = await _context.Payroll
-                .Include(p => p.Employee)
-                .FirstOrDefaultAsync(m => m.PayrollID == id);
+            var payroll = await _context.Payroll           
+                .Where(p => p.PayrollID == id)
+                .FirstOrDefaultAsync();
             if (payroll == null)
             {
                 return NotFound();
@@ -364,36 +404,5 @@ public async Task<IActionResult> Details(Guid? id)
         {
           return (_context.Payroll?.Any(e => e.PayrollID == id)).GetValueOrDefault();
         }
-
-
-/*
-        public static List<SelectListItem> GetTwoWeekPeriods()
-        {
-            List<SelectListItem> selectList = new List<SelectListItem>();
-
-            DateTime start = new DateTime(DateTime.Now.Year, 1, 1); // start from Jan 1st of current year
-            DateTime current = DateTime.Now.Date;
-
-            while (start < current)
-            {
-                var end = start.AddDays(13);
-                var range = $"{start.ToString("MMM dd")} - {end.ToString("MMM dd, yyyy")}";
-                selectList.Add(new SelectListItem(range, start.ToString("yyyy-MM-dd")));
-                start = end.AddDays(1);
-            }
-
-            // add current 2-week period
-            var currentStart = start;
-            var currentEnd = start.AddDays(13);
-            var currentRange = $"{currentStart.ToString("MMM dd")} - {currentEnd.ToString("MMM dd, yyyy")}";
-            selectList.Add(new SelectListItem(currentRange, currentStart.ToString("yyyy-MM-dd")));
-
-            return selectList;
-        }
-
-*/
-
-
-
     }
 }
