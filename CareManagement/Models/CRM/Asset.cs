@@ -17,6 +17,6 @@ namespace CareManagement.Models.CRM
         public string SuiteNo { get; set; }
     
         //public virtual AssetType AssetType { get; set; }
-        public virtual Renter Renter { get; set; }
+        public virtual Renter? Renter { get; set; }
     }
 }
