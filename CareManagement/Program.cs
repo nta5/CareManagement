@@ -9,7 +9,11 @@ using EmailService;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CareManagementContext>(options =>
-    options.UseInMemoryDatabase(databaseName: "CareManagement"));
+    options.
+    /*UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+        ));*/
+    UseInMemoryDatabase(databaseName: "CareManagement"));
 
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<CareManagementContext>()

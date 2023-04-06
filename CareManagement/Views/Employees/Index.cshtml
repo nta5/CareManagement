@@ -16,6 +16,9 @@
                 @Html.DisplayNameFor(model => model.Qualification)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.EmployeeId)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.FirstName)
             </th>
             <th>
@@ -65,6 +68,9 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Qualification.QualificationId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmployeeId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FirstName)

@@ -216,8 +216,120 @@ namespace CareManagement.Models
                             ShiftId = Shift1,
                             EmployeeId = e1,
                             ManagerId = e1,
-                            StartTime = new DateTime(2023, 4, 1, 8, 0, 0),
-                            EndTime = new DateTime(2023, 4, 1, 14, 0, 0),
+                            StartTime = new DateTime(2023, 3, 20, 8, 0, 0),
+                            EndTime = new DateTime(2023, 3, 20, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 3, 21, 8, 0, 0),
+                            EndTime = new DateTime(2023, 3, 21, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 3, 22, 8, 0, 0),
+                            EndTime = new DateTime(2023, 3, 22, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 3, 23, 8, 0, 0),
+                            EndTime = new DateTime(2023, 3, 23, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 3, 24, 8, 0, 0),
+                            EndTime = new DateTime(2023, 3, 24, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 3, 27, 8, 0, 0),
+                            EndTime = new DateTime(2023, 3, 27, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 3, 28, 8, 0, 0),
+                            EndTime = new DateTime(2023, 3, 28, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 3, 29, 8, 0, 0),
+                            EndTime = new DateTime(2023, 3, 29, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 3, 30, 8, 0, 0),
+                            EndTime = new DateTime(2023, 3, 30, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 3, 31, 8, 0, 0),
+                            EndTime = new DateTime(2023, 3, 31, 16, 0, 0),
+                            Sick = false
+                        },                       
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 4, 3, 8, 0, 0),
+                            EndTime = new DateTime(2023, 4, 3, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 4, 4, 8, 0, 0),
+                            EndTime = new DateTime(2023, 4, 4, 16, 0, 0),
+                            Sick = false
+                        },
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 4, 5, 8, 0, 0),
+                            EndTime = new DateTime(2023, 4, 5, 16, 0, 0),
+                            Sick = false
+                        },/*
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 4, 6, 8, 0, 0),
+                            EndTime = new DateTime(2023, 4, 6, 16, 0, 0),
+                            Sick = false
+                        },*/
+                        new Shift
+                        {
+                            EmployeeId = e1,
+                            ManagerId = e1,
+                            StartTime = new DateTime(2023, 4, 7, 8, 0, 0),
+                            EndTime = new DateTime(2023, 4, 7, 16, 0, 0),
                             Sick = false
                         },
                         new Shift

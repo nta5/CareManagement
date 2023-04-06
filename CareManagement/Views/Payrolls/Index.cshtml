@@ -1,101 +1,153 @@
-﻿@model IEnumerable<CareManagement.Models.OM.Payroll>
+﻿@model CareManagement.ViewModels.PayrollViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Payroll";
 }
 
 <h1>Payroll</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<form asp-action="Index" method="post">
+    <div class="form-group">
+        <label asp-for="SelectedEmployeeId">Employee</label>
+        <select asp-for="SelectedEmployeeId" asp-items="ViewBag.EmployeeId" class="form-control">       
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="PayPeriod">Pay Period</label>
+        @Html.DropDownListFor(m => m.PayPeriod, ViewBag.TwoWeekPeriods as SelectList,  new { @class = "form-control" })
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Employee)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.Employee)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartDate)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.StartDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.EndDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EmployeeType)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.EmployeeType)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Hours)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.Hours)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Overtime)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.Overtime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LateDeduction)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.LateDeduction)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.VacationPay)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.VacationPay)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SickPay)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.SickPay)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Pre_tax)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.Pretax)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Tax)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.Tax)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CheckAmount)
+                @Html.DisplayNameFor(model => model.DisplayedPayroll.CheckAmount)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Employee.Address)
+                @Html.DisplayFor(model => model.DisplayedPayroll.Employee.FirstNameLastName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                @Html.DisplayFor(model => model.DisplayedPayroll.StartDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                @Html.DisplayFor(model => model.DisplayedPayroll.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EmployeeType)
+                @Html.DisplayFor(model => model.DisplayedPayroll.EmployeeType)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Hours)
+                @Html.DisplayFor(model => model.DisplayedPayroll.Hours)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Overtime)
+                @Html.DisplayFor(model => model.DisplayedPayroll.Overtime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LateDeduction)
+                @Html.DisplayFor(model => model.DisplayedPayroll.LateDeduction)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.VacationPay)
+                @Html.DisplayFor(model => model.DisplayedPayroll.VacationPay)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SickPay)
+                @Html.DisplayFor(model => model.DisplayedPayroll.SickPay)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Pre_tax)
+                @Html.DisplayFor(model => model.DisplayedPayroll.Pretax)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Tax)
+                @Html.DisplayFor(model => model.DisplayedPayroll.Tax)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CheckAmount)
+                @Html.DisplayFor(model => model.DisplayedPayroll.CheckAmount)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PayrollID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PayrollID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PayrollID">Delete</a>
-            </td>
+      @*      <td>
+                <a asp-action="Edit" asp-route-id="@Model.PayrollID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@Model.PayrollID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@Model.PayrollID">Delete</a>
+            </td>*@
         </tr>
-}
+
     </tbody>
 </table>
+@*@if (Model.DisplayedShift != null && Model.DisplayedSchedules != null)
+{
+    <h2>Shift Details</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Sick</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@(Model.DisplayedShift.Employee.FirstName + " " + Model.DisplayedShift.Employee.LastName)</td>
+                <td>@Model.DisplayedShift.StartTime</td>
+                <td>@Model.DisplayedShift.EndTime</td>
+                <td>@(Model.DisplayedShift.Sick ? "Yes" : "No")</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Schedule for the Week</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Service</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var schedule in Model.DisplayedSchedules)
+            {
+                <tr>
+                    <td>@schedule.StartTime</td>
+                    <td>@schedule.EndTime</td>
+                    <td>@schedule.Service.Type</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}*@

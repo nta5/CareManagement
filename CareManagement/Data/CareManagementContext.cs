@@ -33,5 +33,6 @@ namespace CareManagement.Data
         public DbSet<CareManagement.Models.CRM.AssetRentLog>? AssetRentLog { get; set; }
         public DbSet<CareManagement.Models.CRM.RenterService>? RenterService { get; set; }
         public DbSet<CareManagement.Models.AUTH.AppUser>? AppUser { get; set; }
+        public object Attendance { get; internal set; }
     }
 }

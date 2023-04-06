@@ -17,8 +17,7 @@ namespace CareManagement.Models.OM
         public enum PaymentType
         {
             Hourly,
-            Weekly,
-            Monthly
+            Salary
         }
 
         public enum EType

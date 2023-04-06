@@ -56,7 +56,7 @@ namespace CareManagement.Models.OM
 
 
         [Range(0, int.MaxValue)]
-        public int? SickDays { get; set; } // Current sick days available for use
+        public int SickDays { get; set; } // Current sick days available for use
 
         [Required]
         public Enum.EmployeeTitle Title { get; set; } // Employee title. Manager, Nurse
@@ -67,7 +67,7 @@ namespace CareManagement.Models.OM
 
         [Range(0, int.MaxValue)]
         public int? TotalHoursWorked { get; set; } // Total hours worked since joining company. Used for seniority
-
+        public string FirstNameLastName => FirstName + " " + LastName;
     }
 
 }

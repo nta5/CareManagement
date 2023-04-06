@@ -5,8 +5,7 @@ namespace CareManagement.Models.OM
 {
     public class Vacation
     {
-        [Key]
-        [Range(0, int.MaxValue)]
+        [Key]   
         public Guid VacationId { get; set; }
 
         [Required]
@@ -15,9 +14,12 @@ namespace CareManagement.Models.OM
         public virtual Employee? Employee { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime EndDate { get; set; }
 
         [Required]
         public string? VacationRequest { get; set; }
