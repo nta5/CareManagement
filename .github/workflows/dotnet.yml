@@ -20,9 +20,9 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 7.0.x
     - name: Restore dependencies
-      run: msbuild "./CareManagement" -t:restore #dotnet restore
+      run: dotnet restore
     - name: Build
       run: msbuild #dotnet build --no-restore
    # - name: Test
