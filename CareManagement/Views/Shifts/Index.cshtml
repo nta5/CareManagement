@@ -36,9 +36,8 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ManagerId)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Employee.FirstName)
-                @Html.DisplayFor(modelItem => item.Employee.LastName)
+            <td>           
+                @Html.DisplayFor(modelItem => item.Employee.FirstNameLastName)                
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StartTime)

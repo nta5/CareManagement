@@ -14,31 +14,67 @@ namespace CareManagement.Models.OM
         [Required] [ForeignKey("Employee")] public Guid EmployeeId { get; set; }
         public virtual Employee? Employee { get; set; }
 
-        [Required] public DateTime StartDate { get; set; }
+        [Required]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime StartDate { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        [Required]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime EndDate { get; set; }
 
         [Required]
         // [EnumDataType(typeof(EmploymentType))]
         public Enum.EType EmployeeType { get; set; }
 
 
-        [Required] [Range(0, int.MaxValue)] public int Hours { get; set; }
+        [Required] [Range(0, int.MaxValue)] public double Hours { get; set; }
 
-        [Required] [Range(0, int.MaxValue)] public int Overtime { get; set; }
+        [Required] [Range(0, int.MaxValue)] public double Overtime { get; set; }
 
         [Range(0, int.MaxValue)] public int? LateDeduction { get; set; }
 
-        [Range(0, int.MaxValue)] public int? VacationPay { get; set; }
+        [Range(0, int.MaxValue)]
+        [DisplayFormat(DataFormatString = "{0:F2}")] 
+        public double? VacationPay { get; set; }
 
 
-        [Range(0, int.MaxValue)] public int? SickPay { get; set; }
+        [Range(0, int.MaxValue)]
+        [DisplayFormat(DataFormatString = "{0:F2}")]
+        public double? SickPay { get; set; }
 
-        [Range(0, int.MaxValue)] public float? Pre_tax { get; set; }
+        [Range(0, int.MaxValue)]
+        [DisplayFormat(DataFormatString = "{0:F2}")] 
+        public double? Pretax { get; set; }
 
-        [Range(0, int.MaxValue)] public float? Tax { get; set; }
+        [Range(0, int.MaxValue)]
+        [DisplayFormat(DataFormatString = "{0:F2}")] 
+        public double? Tax { get; set; }
 
-        [Range(0, int.MaxValue)] public int? CheckAmount { get; set; }
+        [Range(0, int.MaxValue)] 
+        [DisplayFormat(DataFormatString = "{0:F2}")]
+        public double? CheckAmount { get; set; }
+
+
+        public static List<Tuple<DateTime, DateTime>> GetTwoWeekPeriods()
+        {
+            var startDate = new DateTime(DateTime.Now.Year, 1, 1); // January 1st of current year
+            var today = DateTime.Today;
+            if (today > startDate)
+            {
+                startDate = today.AddDays(-(int)today.DayOfWeek); // Get start of current week
+            }
+
+            var periods = new List<Tuple<DateTime, DateTime>>();
+            var endDate = startDate.AddDays(13);
+            while (endDate <= DateTime.Today)
+            {
+                periods.Add(new Tuple<DateTime, DateTime>(startDate, endDate));
+                startDate = endDate.AddDays(1);
+                endDate = startDate.AddDays(13);
+            }
+
+            return periods;
+        }
 
     }
 }

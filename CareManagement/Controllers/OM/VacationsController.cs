@@ -48,7 +48,7 @@ namespace CareManagement.Controllers.OM
         // GET: Vacations/Create
         public IActionResult Create()
         {
-            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "Address");
+            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName");
             return View();
         }
 
@@ -66,7 +66,7 @@ namespace CareManagement.Controllers.OM
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "Address", vacation.EmployeeId);
+            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName", vacation.EmployeeId);
             return View(vacation);
         }
 
@@ -83,7 +83,7 @@ namespace CareManagement.Controllers.OM
             {
                 return NotFound();
             }
-            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "Address", vacation.EmployeeId);
+            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName", vacation.EmployeeId);
             return View(vacation);
         }
 
@@ -119,7 +119,7 @@ namespace CareManagement.Controllers.OM
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "Address", vacation.EmployeeId);
+            ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName", vacation.EmployeeId);
             return View(vacation);
         }
 
