@@ -35,7 +35,6 @@
   <ItemGroup>
     <Folder Include="Models\SCHDL\" />
     <Folder Include="Models\AUTH\" />
-    <Folder Include="Controllers\SCHDL\" />
     <Folder Include="Controllers\AUTH\" />
     <Folder Include="Views\Admin\" />
     <Folder Include="Views\Account\" />

@@ -1,4 +1,4 @@
-@model CareManagement.Models.SCHDL.Invoice
+﻿@model CareManagement.Models.SCHDL.Invoice
 
 @{
     ViewData["Title"] = "Edit";
@@ -13,6 +13,11 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="InvoiceNumber" />
+            <div class="form-group">
+                <label asp-for="RenterId" class="control-label"></label>
+                <select asp-for="RenterId" class="form-control" asp-items="ViewBag.RenterId"></select>
+                <span asp-validation-for="RenterId" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
                 <input asp-for="StartDate" class="form-control" />
@@ -37,6 +42,16 @@
                 <label asp-for="DatePaid" class="control-label"></label>
                 <input asp-for="DatePaid" class="form-control" />
                 <span asp-validation-for="DatePaid" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsSent" /> @Html.DisplayNameFor(model => model.IsSent)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="DueDate" class="control-label"></label>
+                <input asp-for="DueDate" class="form-control" />
+                <span asp-validation-for="DueDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

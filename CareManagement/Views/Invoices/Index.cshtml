@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Invoices</h1>
+<h1>Index</h1>
 
 <p>
     <a class="ignoreForPdf" asp-action="Create">Create New</a>
@@ -12,7 +12,7 @@
 <p>
     <a class="ignoreForPdf" id="PrintInvoice" asp-action="">Print All Invoices</a>
 </p>
-<table id="tblInvoices" class="table">
+<table class="table">
     <thead>
         <tr>
             <th>
@@ -64,15 +64,15 @@
                 @Html.DisplayFor(modelItem => item.DatePaid)
             </td>
             <td>
-               @Html.DisplayFor(modelItem => item.IsSent)
+                @Html.DisplayFor(modelItem => item.IsSent)
             </td>
             <td>
-               @Html.DisplayFor(modelItem => item.DueDate)
+                @Html.DisplayFor(modelItem => item.DueDate)
             </td>
             <td>
-               <a class="ignoreForPdf" asp-action="Edit" asp-route-id="@item.InvoiceNumber">Edit</a> |
-               <a class="ignoreForPdf" asp-action="Details" asp-route-id="@item.InvoiceNumber">Details</a> |
-               <a class="ignoreForPdf" asp-action="Delete" asp-route-id="@item.InvoiceNumber">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.InvoiceNumber">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.InvoiceNumber">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.InvoiceNumber">Delete</a>
             </td>
         </tr>
 }

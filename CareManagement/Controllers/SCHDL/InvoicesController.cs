@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,11 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CareManagement.Data;
 using CareManagement.Models.SCHDL;
-using EmailService;
-using System.Text.Json;
 using CareManagement.Models.CRM;
-using CareManagement.Models.OM;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace CareManagement.Controllers.SCHDL
 {
@@ -27,7 +25,7 @@ namespace CareManagement.Controllers.SCHDL
         // GET: Invoices
         public async Task<IActionResult> Index(string sortOrder)
         {
-            var careManagementContext = _context.Invoice.Include(x => x.Renter);
+            var careManagementContext = _context.Invoice.Include(i => i.Renter);
 
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["StartDateSortParm"] = sortOrder == "StartDate" ? "date_desc" : "StartDate";
@@ -90,6 +88,7 @@ namespace CareManagement.Controllers.SCHDL
                     invoices = invoices.OrderBy(i => i.StartDate);
                     break;
             }
+
             return View(await invoices.AsNoTracking().ToListAsync());
         }
 
@@ -107,14 +106,14 @@ namespace CareManagement.Controllers.SCHDL
                 {
                     Renter = i.Renter,
                     InvoiceNumber = i.InvoiceNumber,
-                    StartDate= i.StartDate,
-                    EndDate= i.EndDate,
-                    TotalCost= i.TotalCost,
-                    TotalHours= i.TotalHours,
-                    DatePaid= i.DatePaid,
-                    IsSent= i.IsSent,
-                    DueDate= i.DueDate,
-                    RenterId= i.RenterId,
+                    StartDate = i.StartDate,
+                    EndDate = i.EndDate,
+                    TotalCost = i.TotalCost,
+                    TotalHours = i.TotalHours,
+                    DatePaid = i.DatePaid,
+                    IsSent = i.IsSent,
+                    DueDate = i.DueDate,
+                    RenterId = i.RenterId,
                     ServiceHours = _context.Schedule
                     .Where(s => s.RenterId == i.RenterId)
                     .Select(s => s.Service.Hours).FirstOrDefault(),
@@ -153,7 +152,7 @@ namespace CareManagement.Controllers.SCHDL
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RenterId,InvoiceNumber,StartDate,EndDate,DatePaid")] Invoice invoice)
+        public async Task<IActionResult> Create([Bind("InvoiceNumber,RenterId,StartDate,EndDate,TotalHours,TotalCost,DatePaid,IsSent,DueDate")] Invoice invoice)
         {
             if (ModelState.IsValid)
             {
@@ -162,7 +161,11 @@ namespace CareManagement.Controllers.SCHDL
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RenterId"] = new SelectList(_context.Renter, "RenterId", "RenterId", invoice.RenterId);
+            ViewData["RenterId"] = _context.Renter.Select(r => new SelectListItem
+            {
+                Value = r.RenterId.ToString(),
+                Text = $"{r.Name} ({r.RmNumber})"
+            }).ToList();
             return View(invoice);
         }
 
@@ -179,6 +182,11 @@ namespace CareManagement.Controllers.SCHDL
             {
                 return NotFound();
             }
+            ViewData["RenterId"] = _context.Renter.Select(r => new SelectListItem
+            {
+                Value = r.RenterId.ToString(),
+                Text = $"{r.Name} ({r.RmNumber})"
+            }).ToList();
             return View(invoice);
         }
 
@@ -187,7 +195,7 @@ namespace CareManagement.Controllers.SCHDL
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("InvoiceNumber,StartDate,EndDate,TotalHours,TotalCost,DatePaid")] Invoice invoice)
+        public async Task<IActionResult> Edit(Guid id, [Bind("InvoiceNumber,RenterId,StartDate,EndDate,TotalHours,TotalCost,DatePaid,IsSent,DueDate")] Invoice invoice)
         {
             if (id != invoice.InvoiceNumber)
             {
@@ -214,6 +222,11 @@ namespace CareManagement.Controllers.SCHDL
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["RenterId"] = _context.Renter.Select(r => new SelectListItem
+            {
+                Value = r.RenterId.ToString(),
+                Text = $"{r.Name} ({r.RmNumber})"
+            }).ToList();
             return View(invoice);
         }
 
@@ -226,6 +239,7 @@ namespace CareManagement.Controllers.SCHDL
             }
 
             var invoice = await _context.Invoice
+                .Include(i => i.Renter)
                 .FirstOrDefaultAsync(m => m.InvoiceNumber == id);
             if (invoice == null)
             {
@@ -249,14 +263,14 @@ namespace CareManagement.Controllers.SCHDL
             {
                 _context.Invoice.Remove(invoice);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool InvoiceExists(Guid id)
         {
-          return (_context.Invoice?.Any(e => e.InvoiceNumber == id)).GetValueOrDefault();
+            return (_context.Invoice?.Any(e => e.InvoiceNumber == id)).GetValueOrDefault();
         }
 
         // GET: Invoices/Email/5
@@ -316,7 +330,7 @@ namespace CareManagement.Controllers.SCHDL
                 + "| Service Type: " + invoice_email.ServiceType + "\n"
                 + "| Service Rate: " + invoice_email.ServiceRate + "\n"
                 + "| Service Hours: " + invoice_email.ServiceHours + "\n";
-            
+
             TempData["Invoice"] = content;
             TempData["CustomerEmail"] = invoice_email.Renter.Email;
 
@@ -326,17 +340,30 @@ namespace CareManagement.Controllers.SCHDL
 
     internal class InvoiceViewModel
     {
+        [DisplayName("Invoice Number")]
         public Guid InvoiceNumber { get; set; }
+        [Display(Name = "Start Date")]
         public DateTime StartDate { get; set; }
+        [Display(Name = "End Date")]
         public DateTime EndDate { get; set; }
+        [Display(Name = "Total Hours")]
         public double TotalHours { get; set; }
+        [Display(Name = "Total Cost")]
         public double TotalCost { get; set; }
+        [DisplayName("Date Paid")]
         public DateTime DatePaid { get; set; }
+        [DisplayName("Sent to Customer")]
         public bool IsSent { get; set; }
+        [DisplayName("Due Date")]
         public DateTime DueDate { get; set; }
+        [DisplayName("Service Type")]
         public string ServiceType { get; set; }
+        [DisplayName("Service Rate")]
         public double ServiceRate { get; set; }
+        [DisplayName("Service Hours")]
         public double ServiceHours { get; set; }
+
+        [Display(Name = "Renter")]
         public Guid RenterId { get; set; }
         public Renter? Renter { get; internal set; }
 
