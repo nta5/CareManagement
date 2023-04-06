@@ -8,7 +8,7 @@ namespace SeleniumTests.Tests
 	[TestClass]
 	public class UnitTest1
 	{
-		[TestMethod]
+        /*[TestMethod]
 		public void TestService()
 		{
 			string urlServices = "https://localhost:7121/Services";
@@ -264,6 +264,170 @@ namespace SeleniumTests.Tests
             driver.FindElement(By.LinkText("Back to List")).Click();
 
             // This tests deleting a schedule
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Delete")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.XPath("//Input[@type='submit']")).Click();
+        }*/
+
+        [TestMethod]
+        public void TestEmployee()
+        {
+            string employeeUrl = "https://localhost:7121/Employees";
+            ChromeDriver driver = new ChromeDriver();
+
+            // This redirects to the Employees URL
+            driver.Manage().Window.Maximize();
+            driver.Navigate().GoToUrl(employeeUrl);
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            // This tests creating an employee
+            driver.FindElement(By.LinkText("Create New")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.Id("FirstName")).SendKeys("John");
+            driver.FindElement(By.Id("LastName")).SendKeys("Doe");
+            driver.FindElement(By.Id("Address")).SendKeys("123 Main Street");
+            driver.FindElement(By.Id("EmergencyContact")).SendKeys("123456789");
+            driver.FindElement(By.Id("Phone")).SendKeys("1235551234");
+            driver.FindElement(By.Id("PayRate")).SendKeys("30");
+            driver.FindElement(By.Id("VacationDays")).SendKeys("15");
+            driver.FindElement(By.Id("SickDays")).SendKeys("15");
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            // This tests searching for reports by time range
+            IWebElement startTime = driver.FindElement(By.Name("StartDate"));
+            startTime.SendKeys("03012019\t");  // Use tab to shift to the next value
+            startTime.SendKeys("0245PM");
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.Id("TotalHoursWorked")).SendKeys("15");
+
+            driver.FindElement(By.XPath("//Input[@type='submit']")).Click();
+
+            // This tests editing an employee
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Edit")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.Id("PayRate")).Clear();
+            driver.FindElement(By.Id("VacationDays")).Clear();
+            driver.FindElement(By.Id("SickDays")).Clear();
+            driver.FindElement(By.Id("PayRate")).SendKeys("45");
+            driver.FindElement(By.Id("VacationDays")).SendKeys("5");
+            driver.FindElement(By.Id("SickDays")).SendKeys("4");
+
+            driver.FindElement(By.LinkText("Back to List")).Click();
+
+            // This tests viewing an employee
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Details")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Back to List")).Click();
+
+            //Test employee history
+            TestEmployeeHist(driver);
+            TestVacation(driver);
+
+            // This tests deleting an employee
+            // This redirects to the Employees URL
+            driver.Navigate().GoToUrl(employeeUrl);
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Delete")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.XPath("//Input[@type='submit']")).Click();
+
+        }
+        public void TestEmployeeHist(ChromeDriver driver1)
+        {
+            string employeeUrl = "https://localhost:7121/EmployeeHistories";
+            ChromeDriver driver = driver1;
+
+            // This redirects to the Employees history URL
+            driver.Manage().Window.Maximize();
+
+            driver.Navigate().GoToUrl(employeeUrl);
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            // This tests creating an employee history
+            driver.FindElement(By.LinkText("Create New")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.TagName("body")).SendKeys(Keys.Control + Keys.Subtract + Keys.Subtract);
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+
+            driver.FindElement(By.Id("PayRate")).SendKeys("30");
+            driver.FindElement(By.Id("VacationDays")).SendKeys("15");
+            driver.FindElement(By.Id("SickDays")).SendKeys("15");
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.Id("Date")).SendKeys("12312019");
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+
+            driver.FindElement(By.XPath("//Input[@type='submit']")).Click();
+
+            // This tests editing an employee history
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Edit")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.Id("PayRate")).Clear();
+            driver.FindElement(By.Id("VacationDays")).Clear();
+            driver.FindElement(By.Id("SickDays")).Clear();
+            driver.FindElement(By.Id("PayRate")).SendKeys("30");
+            driver.FindElement(By.Id("VacationDays")).SendKeys("15");
+            driver.FindElement(By.Id("SickDays")).SendKeys("15");
+
+            driver.FindElement(By.XPath("//Input[@type='submit']")).Click();
+
+
+            // This tests viewing an employee history
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Details")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Back to List")).Click();
+
+            // This tests deleting an employee history
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Delete")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.XPath("//Input[@type='submit']")).Click(); 
+        }
+
+        public void TestVacation(ChromeDriver driver1)
+        {
+            string employeeUrl = "https://localhost:7121/Vacations";
+            ChromeDriver driver = driver1;
+
+            // This redirects to the Employees history URL
+            driver.Manage().Window.Maximize();
+
+            driver.Navigate().GoToUrl(employeeUrl);
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            // This tests creating an employee history
+            driver.FindElement(By.LinkText("Create New")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+
+
+            // This tests searching for reports by time range
+            IWebElement startTime = driver.FindElement(By.Name("StartDate"));
+            startTime.SendKeys("03012019\t");  // Use tab to shift to the next value
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            IWebElement endTime = driver.FindElement(By.Name("EndDate"));
+            endTime.SendKeys("03082019\t");  // Use tab to shift to the next value
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.Id("VacationRequest")).SendKeys("Vacation");
+
+            driver.FindElement(By.XPath("//Input[@type='submit']")).Click();
+
+            // This tests editing an employee history
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Edit")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.Id("VacationRequest")).Clear();
+            driver.FindElement(By.Id("VacationRequest")).SendKeys("New York");
+
+            driver.FindElement(By.XPath("//Input[@type='submit']")).Click();
+
+
+            // This tests viewing an employee history
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Details")).Click();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.FindElement(By.LinkText("Back to List")).Click();
+
+            // This tests deleting an employee history
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
             driver.FindElement(By.LinkText("Delete")).Click();
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
