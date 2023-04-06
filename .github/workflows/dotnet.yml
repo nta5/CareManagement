@@ -5,7 +5,7 @@ name: .NET
 
 on:
   push:
-    branches: ["brad-selenium-action"]
+    branches: ["master","dev","brad-selenium-action"]
   pull_request:
     branches: [ "master" ]
 
