@@ -157,6 +157,29 @@ namespace CareManagement.Controllers.SCHDL
             if (ModelState.IsValid)
             {
                 invoice.InvoiceNumber = Guid.NewGuid();
+                var invoice_create = _context.Invoice
+                .Include(x => x.Renter)
+                .Select(i => new InvoiceViewModel
+                {
+                    Renter = i.Renter,
+                    InvoiceNumber = i.InvoiceNumber,
+                    StartDate = i.StartDate,
+                    EndDate = i.EndDate,
+                    TotalCost = i.TotalCost,
+                    TotalHours = i.TotalHours,
+                    DatePaid = i.DatePaid,
+                    IsSent = i.IsSent,
+                    DueDate = i.DueDate,
+                    RenterId = i.RenterId,
+                    ServiceHours = _context.Schedule
+                    .Where(s => s.RenterId == i.RenterId)
+                    .Select(s => s.Service.Hours).FirstOrDefault(),
+                    ServiceRate = _context.Schedule
+                    .Where(s => s.RenterId == i.RenterId)
+                    .Select(s => s.Service.Rate).FirstOrDefault()
+                });
+                invoice.TotalHours = invoice_create.Select(s => s.TotalHours).FirstOrDefault();
+                invoice.TotalCost = invoice_create.Select(s => s.TotalCost).FirstOrDefault();
                 _context.Add(invoice);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
