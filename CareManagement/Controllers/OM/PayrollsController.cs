@@ -32,179 +32,186 @@ namespace CareManagement.Controllers.OM
         {
             return RedirectToAction("Index", new { employeeId = employeeId, startDate = startDate });
         }*/
-        public async Task<IActionResult> Index(Guid employeeIdIn = default, DateTime startDateIn = default)
+        [HttpGet]
+        public async Task<IActionResult> Index(Guid? employeeIdIn, DateTime startDateIn)
         {
             ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName");
             List<String> periods = TwoWeekHelper.GetTwoWeekPeriods();
             ViewBag.TwoWeekPeriods = new SelectList(periods);
-           
-
-            // Get the start and end dates for the past two weeks
-            DateTime startDate = startDateIn;
-            DateTime endDate = startDateIn.AddDays(14);
-
-            // Get all shifts within the past two weeks
-            var shifts = _context.Shift
-                .Where(s => s.StartTime >= startDate && s.EndTime <= endDate && s.Employee.EmployeeId == employeeIdIn)
-                .Include(s => s.Employee)
-                .ToList();
-
-            // Calculate the total hours worked and pay for each employee            
-
-            var employeeShifts = shifts.GroupBy(s => s.EmployeeId)
-               .Select(g => new
-               {
-                   EmployeeId = g.Key,
-                   TotalHoursWorked = g.Sum(s => (s.EndTime - s.StartTime).TotalHours),
-                   PayRate = _context.Employee.Where(e => e.EmployeeId == g.Key).Select(e => e.PayRate).FirstOrDefault(),
-                   SickDays = g.Sum(s => s.Sick ? 1 : 0)
-               })
-               .FirstOrDefault();
-            //Guid? empId = employeeShifts.EmployeeId;
-            var currentEmployee = _context.Employee.Where(e => e.EmployeeId == employeeIdIn).FirstOrDefault();
-            double totalHours = employeeShifts.TotalHoursWorked;
-            double payRate = employeeShifts.PayRate;
-
-            // Calculating Sickpay
-            int sickDays = employeeShifts.SickDays;
-            int sickHours = 0;
-            int unpaidSickDays = sickDays - currentEmployee.SickDays;
-            sickHours = currentEmployee.SickDays * 8;
-            totalHours -= (unpaidSickDays * 8) + sickHours;
-
-
-            // Calculate overtime
-            double totalOvertimeHours = 0;
-            Dictionary<DateTime, double> dailyHours = new Dictionary<DateTime, double>();
-            foreach (var shift in shifts)
+            if (employeeIdIn.HasValue)
             {
-                DateTime date = shift.StartTime.Date;
-                if (!dailyHours.ContainsKey(date))
-                {
-                    dailyHours[date] = (shift.EndTime - shift.StartTime).TotalHours;
-                }
-                else
-                {
-                    dailyHours[date] += (shift.EndTime - shift.StartTime).TotalHours;
-                }
-            }
-            foreach (var hours in dailyHours.Values)
-            {
-                if (hours > 8)
-                {
-                    totalOvertimeHours += hours - 8;
-                }
-            }
+                // Get the start and end dates for the past two weeks
+                DateTime startDate = startDateIn;
+                DateTime endDate = startDateIn.AddDays(14);
 
-            if (totalHours > 80)
-            {
-                double excessHours = totalHours - 80;
-
-                if (totalOvertimeHours < excessHours)
-                {
-                    totalOvertimeHours = excessHours;
-                }
-                totalHours -= totalOvertimeHours;
-
-            }
-            else
-            {
-                totalHours -= totalOvertimeHours;
-            }
-
-
-            // Calculating totalPay
-            double regularPay = 0;
-            double overtimePay = 0;
-            double sickPay = 0;
-            double totalPay = 0;
-            double taxBracket = 0;
-            if (currentEmployee.PayType == CareManagement.Models.OM.Enum.PaymentType.Hourly)
-            {
-                // Calculate total pay
-                regularPay = totalHours * payRate;
-                overtimePay = totalOvertimeHours * (payRate * 1.5);
-                sickPay = sickHours * payRate;
-                totalPay = regularPay + overtimePay + sickPay;
-                if (payRate < tax15Hourly)
-                {
-                    taxBracket = tax15;
-                }
-                else if (payRate < tax20Hourly)
-                {
-                    taxBracket = tax20;
-                }
-                else
-                {
-                    taxBracket = tax26;
-                }
-            }
-            else
-            {
-                totalPay = payRate / 12;
-                if (totalOvertimeHours > 0)
-                {
-                    totalPay += (payRate / 2080) * totalOvertimeHours;
-                }
-                if (payRate < tax15Salary)
-                {
-                    taxBracket = tax15;
-                }
-                else if (payRate < tax20Salary)
-                {
-                    taxBracket = tax20;
-                }
-                else
-                {
-                    taxBracket = tax26;
-                }
-            }
-
-
-
-
-            var payrollId = new Guid();
-            var checker = _context.Payroll.Where(s => s.PayrollID == payrollId).ToList();
-            //s.StartDate >= startDate && s.EndDate <= endDate && s.Hours == totalHours && s.SickPay == sickPay && s.Overtime == totalOvertimeHours).ToList();
-            if (!checker.Any())
-            {
-                var payrollsToDelete = _context.Payroll
-                    .Where(s => s.StartDate >= startDate && s.EndDate <= endDate && s.StartDate != s.EndDate)
+                // Get all shifts within the past two weeks
+                var shifts = _context.Shift
+                    .Where(s => s.StartTime >= startDate && s.EndTime <= endDate && s.Employee.EmployeeId == employeeIdIn)
+                    .Include(s => s.Employee)
                     .ToList();
 
-                if (payrollsToDelete.Any())
+                // Calculate the total hours worked and pay for each employee            
+
+                var employeeShifts = shifts.GroupBy(s => s.EmployeeId)
+                   .Select(g => new
+                   {
+                       EmployeeId = g.Key,
+                       TotalHoursWorked = g.Sum(s => (s.EndTime - s.StartTime).TotalHours),
+                       PayRate = _context.Employee.Where(e => e.EmployeeId == g.Key).Select(e => e.PayRate).FirstOrDefault(),
+                       SickDays = g.Sum(s => s.Sick ? 1 : 0)
+                   })
+                   .FirstOrDefault();
+                Guid empId = employeeShifts.EmployeeId;
+                var currentEmployee = _context.Employee.Where(e => e.EmployeeId == employeeIdIn).FirstOrDefault();
+                double totalHours = employeeShifts.TotalHoursWorked;
+                double payRate = employeeShifts.PayRate;
+
+                // Calculating Sickpay
+                int sickDays = employeeShifts.SickDays;
+                int sickHours = 0;
+                int unpaidSickDays = sickDays - currentEmployee.SickDays;
+                sickHours = currentEmployee.SickDays * 8;
+                totalHours -= (unpaidSickDays * 8) + sickHours;
+
+
+                // Calculate overtime
+                double totalOvertimeHours = 0;
+                Dictionary<DateTime, double> dailyHours = new Dictionary<DateTime, double>();
+                foreach (var shift in shifts)
                 {
-                    _context.Payroll.RemoveRange(payrollsToDelete);
+                    DateTime date = shift.StartTime.Date;
+                    if (!dailyHours.ContainsKey(date))
+                    {
+                        dailyHours[date] = (shift.EndTime - shift.StartTime).TotalHours;
+                    }
+                    else
+                    {
+                        dailyHours[date] += (shift.EndTime - shift.StartTime).TotalHours;
+                    }
+                }
+                foreach (var hours in dailyHours.Values)
+                {
+                    if (hours > 8)
+                    {
+                        totalOvertimeHours += hours - 8;
+                    }
+                }
+
+                if (totalHours > 80)
+                {
+                    double excessHours = totalHours - 80;
+
+                    if (totalOvertimeHours < excessHours)
+                    {
+                        totalOvertimeHours = excessHours;
+                    }
+                    totalHours -= totalOvertimeHours;
+
+                }
+                else
+                {
+                    totalHours -= totalOvertimeHours;
+                }
+
+
+                // Calculating totalPay
+                double regularPay = 0;
+                double overtimePay = 0;
+                double sickPay = 0;
+                double totalPay = 0;
+                double taxBracket = 0;
+                if (currentEmployee.PayType == CareManagement.Models.OM.Enum.PaymentType.Hourly)
+                {
+                    // Calculate total pay
+                    regularPay = totalHours * payRate;
+                    overtimePay = totalOvertimeHours * (payRate * 1.5);
+                    sickPay = sickHours * payRate;
+                    totalPay = regularPay + overtimePay + sickPay;
+                    if (payRate < tax15Hourly)
+                    {
+                        taxBracket = tax15;
+                    }
+                    else if (payRate < tax20Hourly)
+                    {
+                        taxBracket = tax20;
+                    }
+                    else
+                    {
+                        taxBracket = tax26;
+                    }
+                }
+                else
+                {
+                    totalPay = payRate / 12;
+                    if (totalOvertimeHours > 0)
+                    {
+                        totalPay += (payRate / 2080) * totalOvertimeHours;
+                    }
+                    if (payRate < tax15Salary)
+                    {
+                        taxBracket = tax15;
+                    }
+                    else if (payRate < tax20Salary)
+                    {
+                        taxBracket = tax20;
+                    }
+                    else
+                    {
+                        taxBracket = tax26;
+                    }
+                }
+
+
+
+
+                var payrollId = new Guid();
+                var checker = _context.Payroll.Where(s => s.PayrollID == payrollId).ToList();
+                //s.StartDate >= startDate && s.EndDate <= endDate && s.Hours == totalHours && s.SickPay == sickPay && s.Overtime == totalOvertimeHours).ToList();
+                if (!checker.Any())
+                {
+                    var payrollsToDelete = _context.Payroll
+                        .Where(s => s.StartDate >= startDate && s.EndDate <= endDate && s.StartDate != s.EndDate)
+                        .ToList();
+
+                    if (payrollsToDelete.Any())
+                    {
+                        _context.Payroll.RemoveRange(payrollsToDelete);
+                        _context.SaveChanges();
+                    }
+                    _context.Payroll.AddRange(
+                    new Payroll
+                    {
+                        PayrollID = payrollId,
+                        EmployeeId = empId,
+                        StartDate = startDate,
+                        EndDate = endDate,
+                        EmployeeType = currentEmployee.EmployeeType,
+                        Hours = (int)totalHours,
+                        Overtime = (int)totalOvertimeHours,
+                        LateDeduction = 0,
+                        VacationPay = 0,
+                        SickPay = Math.Round(sickPay),
+                        Pretax = Math.Round(totalPay, 2),
+                        Tax = Math.Round(totalPay * taxBracket, 2),
+                        //EmployeePayroll = employeePayroll,
+                        CheckAmount = Math.Round(totalPay - (totalPay * taxBracket), 2)
+                    }
+
+                    );
                     _context.SaveChanges();
                 }
-                _context.Payroll.AddRange(
-                new Payroll
-                {
-                    PayrollID = payrollId,
-                    EmployeeId = employeeIdIn,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    EmployeeType = currentEmployee.EmployeeType,
-                    Hours = (int)totalHours,
-                    Overtime = (int)totalOvertimeHours,
-                    LateDeduction = 0,
-                    VacationPay = 0,
-                    SickPay = Math.Round(sickPay),
-                    Pretax = Math.Round(totalPay, 2),
-                    Tax = Math.Round(totalPay * taxBracket, 2),
-                    //EmployeePayroll = employeePayroll,
-                    CheckAmount = Math.Round(totalPay - (totalPay * taxBracket), 2)
-                }
 
-                );
-                _context.SaveChanges();
+
+                var payrollView = await _context.Payroll.FirstOrDefaultAsync(p => p.PayrollID == payrollId);
+
+
+                return View(payrollView);
+            } else
+            {
+                return View();
             }
 
-
-            var payrollView = await _context.Payroll.FirstOrDefaultAsync(p => p.PayrollID == payrollId);
-
-
-            return View(payrollView);
+           
         }
 
 
