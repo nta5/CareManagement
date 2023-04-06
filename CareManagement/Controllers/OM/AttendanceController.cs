@@ -20,25 +20,62 @@ namespace CareManagement.Controllers
             _context = context;
         }
 
-        // GET: Attendance/CheckInOut
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(AttendanceViewModel model)
         {
             ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName");
             var employees = await _context.Employee.ToListAsync();
-            var model = new AttendanceViewModel
+
+            if (model == null)
             {
-                EmployeeList = new SelectList(employees, "Id", "FirstName"),
-                //IsCheckedIn= false
-            };
-            
+                model = new AttendanceViewModel
+                {
+                    EmployeeList = new SelectList(employees, "Id", "FirstName"),
+                    IsCheckedIn = false
+                };
+            }
+            else
+            {
+                // Check if the selected employee is currently checked in
+                var currentShift = await _context.Shift
+                    .Where(s => s.EmployeeId == model.EmployeeId && s.StartTime.Date == DateTime.Now.Date)
+                    .OrderByDescending(s => s.StartTime)
+                    .FirstOrDefaultAsync();
+
+                model.IsCheckedIn = (currentShift != null && currentShift.EndTime == DateTime.MinValue);
+            }
+
+            // Get the TempData message and assign it to ViewBag
+            ViewBag.Message = TempData["Message"]?.ToString();
+
             return View(model);
         }
+
+        /* public async Task<IActionResult> Index(AttendanceViewModel model)
+         {
+             ViewData["EmployeeId"] = new SelectList(_context.Employee, "EmployeeId", "FirstNameLastName");
+             var employees = await _context.Employee.ToListAsync();
+             if (model == null)
+             {
+                 model = new AttendanceViewModel
+                 {
+                     EmployeeList = new SelectList(employees, "Id", "FirstName"),
+                     IsCheckedIn = false
+                 };
+             }
+
+
+             // Get the TempData message and assign it to ViewBag
+             ViewBag.Message = TempData["Message"]?.ToString();
+
+             return View(model);
+         }*/
 
         [HttpPost]
         public IActionResult CheckIn(AttendanceViewModel model)
         {
             model.currentAttendance = new Attendance();
             model.currentAttendance.CheckInTime = DateTime.Now;
+            model.IsCheckedIn = true;
             // Create a new Shift object
             var shift = new Shift
             {
@@ -54,10 +91,10 @@ namespace CareManagement.Controllers
             _context.Add(shift);
             _context.SaveChanges();
 
-            // Set the ViewBag message
-            ViewBag.Message = $"You have checked in at {DateTime.Now.ToString("hh:mm tt")}.";
+            // Set the TempData message
+            TempData["Message"] = $"You have checked in at {DateTime.Now.ToString("hh:mm tt")}.";
 
-             return View("Index");
+            return RedirectToAction("Index", model);
         }
 
         [HttpPost]
@@ -76,12 +113,12 @@ namespace CareManagement.Controllers
                 shift.EndTime = DateTime.Now;
                 _context.SaveChanges();
 
-                // Set the ViewBag message
-                ViewBag.Message = $"You have checked out at {DateTime.Now.ToString("hh:mm tt")}.";
+                // Set the TempData message
+                TempData["Message"] = $"You have checked out at {DateTime.Now.ToString("hh:mm tt")}.";
             }
 
             // Redirect to the Index action
-            return View("Index");
+            return RedirectToAction("Index", model);
         }
     }
 }

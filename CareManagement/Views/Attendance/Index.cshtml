@@ -9,15 +9,30 @@
 <form method="post">
     <div class="form-group">
         <label asp-for="EmployeeId">Employee</label>
-        <select asp-for="EmployeeId" asp-items="ViewBag.EmployeeId" class="form-control"></select>
+        <select asp-for="EmployeeId" asp-items="ViewBag.EmployeeId" class="form-control" onchange="refreshPage()"></select>
     </div>
 
     <div class="form-group">
-        <button type="submit" class="btn btn-primary" name="action" value="checkout" formaction="@Url.Action("Checkout", "Attendance")">Check Out</button>
-        <button type="submit" class="btn btn-primary" name="action" value="checkin" formaction="@Url.Action("CheckIn", "Attendance")">Check In</button>
+        @if (Model.IsCheckedIn)
+            {
+                <button type="submit" class="btn btn-primary" name="action" value="checkout" formaction="@Url.Action("Checkout", "Attendance")">Check Out</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" name="action" value="checkin" formaction="@Url.Action("CheckIn", "Attendance")">Check In</button>
+            }
     </div>
 
     <div class="form-group">
         <p id="message">@ViewBag.Message</p>
     </div>
 </form>
+
+@section Scripts {
+    <script>
+        function refreshPage() {
+            var employeeId = document.getElementById("EmployeeId").value;
+            window.location.href = "@Url.Action("Index", "Attendance")?employeeId=" + employeeId;
+        }
+    </script>
+}
